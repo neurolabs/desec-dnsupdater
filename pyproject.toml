@@ -1,0 +1,111 @@
+[tool.poetry]
+name = "desec-dnsupdater"
+version = "0.1.0"
+license = "MIT"
+description = "A simple DynDNS client for deSEC.io"
+authors = ["Ole Langbehn <ole@langbehn.family>"]
+readme = "README.md"
+packages = [{include = "desec_dyndns.py"}]
+classifiers = [
+    "Environment :: Console",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
+]
+#repository = ""
+#documentation = ""
+#include = [
+#    { path = "CHANGELOG.md", format = "sdist" },
+#]
+
+#[tool.poetry.urls]
+#"Issue Tracker" = ""
+#Changelog = ""
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+desec-dns = "1.2.0"
+click = "^8.1.8"
+ifaddr = "^0.2.0"
+netifaces2 = ">=0.0.22"
+
+[tool.poetry.scripts]
+desec-dyndns = "desec_dyndns:update"
+
+[tool.poetry.group.dev.dependencies]
+ruff = ">=0.4.5"
+mypy = ">=1.10.0"
+#tox = ">=4.0.0"
+pytest = ">=8.0.0"
+#pytest-recording = ">=0.13.1"
+#coverage = {version = ">=7.2.0", extras = ["toml"]}
+#pytest-cov = ">=3.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+extend-select = [
+    "W", # pycodestyle warnings
+    "I", # isort
+    "N", # pep8-naming
+    "D", # pydocstyle
+    "UP", # pyupgrade
+    "S", # flake8-bandit
+    "B", # flake8-bugbear
+    "FA", # flake8-future-annotations
+    "PT", # flake8-pytest-style
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "RUF", # Ruff-specific rules
+]
+#ignore = [
+#    "D105", # undocumented-magic-method
+#    "D107", # undocumented-public-init
+#    "D203", # one-blank-line-before-class
+#    "D213", # multi-line-summary-second-line
+#    "PT003", # pytest-extraneous-scope-function
+#    "PT006", # pytest-parametrize-names-wrong-type
+#    "SIM105", # suppressible-exception
+#    "SIM108", # if-else-block-instead-of-if-exp
+#    "SIM212", # if-expr-with-twisted-arms
+#]
+
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 92
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
+mark-parentheses = false
+
+[tool.black]
+line-length = 120
+
+[tool.mypy]
+disallow_any_generics = true
+disallow_untyped_defs = true
+disallow_untyped_decorators = true
+strict_equality = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unreachable = true
+enable_error_code = [
+    "redundant-expr",
+    "possibly-undefined",
+    "truthy-bool",
+    "ignore-without-code"
+]
+exclude = [
+    "^tests/",
+]
+
+
