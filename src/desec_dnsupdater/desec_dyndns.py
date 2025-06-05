@@ -82,7 +82,9 @@ def _get_public_ipv4() -> str | None:
         )
         response = s.get("https://api.ipify.org/", timeout=5)
         response.raise_for_status()
-        return response.text.strip()
+        address = response.text.strip()
+        _debug(f"Found public IPv4 address: {address}")
+        return address
     except requests.RequestException as e:
         _warn(f"Error retrieving public IPv4, not updating IPv4: {e}")
         return None
