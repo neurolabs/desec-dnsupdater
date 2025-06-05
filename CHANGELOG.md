@@ -8,9 +8,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Randomization of delays as proposed by https://talk.desec.io/t/erratic-502-bad-gateway-responses-on-update-dedyn-io/1312/18
-- Bigger delay after update as proposed by https://talk.desec.io/t/erratic-502-bad-gateway-responses-on-update-dedyn-io/1312/18
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +17,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 
 ### Security
+
+## [0.1.4] - 2025-06-05
+
+### Added
+
+- Randomization of delays as proposed by https://talk.desec.io/t/erratic-502-bad-gateway-responses-on-update-dedyn-io/1312/18
+- Bigger delay after update as proposed by https://talk.desec.io/t/erratic-502-bad-gateway-responses-on-update-dedyn-io/1312/18
 
 ## [0.1.3] - 2025-06-05
 
@@ -34,16 +38,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - open log file for appending instead of for writing
 - only configure cli logging for desec lib if log target is stdout
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - Handled special case of empty subdomain (`-s ""`)
 - Fixed error in IPv6 update path where IPv6 address was compared against IPv4 address
-
-### Security
 
 ## [0.1.2] - 2025-06-05
 
