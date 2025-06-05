@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Randomization of delays as proposed by https://talk.desec.io/t/erratic-502-bad-gateway-responses-on-update-dedyn-io/1312/18
+- Bigger delay after update as proposed by https://talk.desec.io/t/erratic-502-bad-gateway-responses-on-update-dedyn-io/1312/18
+
 ### Changed
 
 ### Deprecated

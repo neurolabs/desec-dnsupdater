@@ -3,6 +3,7 @@
 import contextlib
 import dataclasses
 import ipaddress
+import random
 import socket
 import sys
 from time import sleep
@@ -45,7 +46,10 @@ def _configure_logging(log_target: click.File, verbosity: int) -> None:
     _log_verbosity_level = verbosity
     if _log_target == sys.stdout:
         # also configure desec's CLI logging
-        # verbosity 3 -> level 10 (DEBUG), verbosity 2 -> level 20 (INFO), verbosity 1 -> level 30 (WARNING), verbosity 0 -> level 40 (ERROR)
+        # verbosity 3 -> level 10 (DEBUG),
+        # verbosity 2 -> level 20 (INFO),
+        # verbosity 1 -> level 30 (WARNING),
+        # verbosity 0 -> level 40 (ERROR)
         desec._configure_cli_logging(40 - verbosity * 10)
 
 
@@ -142,13 +146,14 @@ def _get_resolver_against_domain_nameservers(domain: str) -> dns.resolver.Resolv
 
 def _update_once(
     domain: str,
-    subdomain: list[str],
+    subdomains: list[str],
     token: str,
     interface: str | None,
     wait_time: int,
     dry_run: bool,
-) -> None:
+) -> bool:
     """Update the DNS records for the given domain and subdomain."""
+    has_updated = False
     to_update: Updates = Updates()
     # Get the public IPv4 address
     public_ipv4 = _get_public_ipv4()
@@ -166,7 +171,7 @@ def _update_once(
     else:
         _debug("No interface specified, skipping update of IPv6 address.")
     for rtype, public_ip in to_update.as_tuples():
-        for subdomain_name in subdomain:
+        for subdomain_name in subdomains:
             # handle special case of empty subdomain
             fqdn = f"{subdomain_name}.{domain}" if subdomain_name else domain
             ips = [
@@ -193,7 +198,9 @@ def _update_once(
                     api_client.add_record(
                         domain=domain, subname=subdomain_name, rtype=rtype, rrset=[public_ip], ttl=3600
                     )
+                has_updated = True
                 sleep(wait_time)
+    return has_updated
 
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], auto_envvar_prefix="DESEC_DYNDNS")
@@ -242,7 +249,7 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], auto_envvar_prefix="
     type=int,
     default=60,
     show_default=True,
-    help="The wait time between checks for updates in seconds (for continuous updates, see --continuous/-c).",
+    help="The minimum wait time between checks for updates in seconds (for continuous updates, see --continuous/-c). Every run will add 0-10 seconds on top in order distribute server load across the seconds of a minute.",
 )
 @click.option(
     "--wait-time-between-api-calls",
@@ -268,9 +275,19 @@ def update(
     if continuous:
         _debug(f"Running in continuous mode, will update every {wait_time_between_checks} seconds.")
         while True:
-            _update_once(domain, subdomain, token, interface, wait_time_between_api_calls, dry_run)
-            sleep(wait_time_between_checks)
+            has_updated = _update_once(domain, subdomain, token, interface, wait_time_between_api_calls, dry_run)
+            if has_updated:
+                _info("After update, adding extra sleep time to allow DNS propagation.")
+                sleep(random.choice(range(300, 600)))  # noqa: S311
+            else:
+                sleep(random.choice(range(wait_time_between_checks, wait_time_between_checks + 10)))  # noqa: S311
     else:
+        _debug("Running in one-time mode, will update once and then exit.")
+        if not dry_run:
+            _info(
+                "Assuming call via cron, will wait a random time between 10 and 20 seconds before updating in order to distribute server load across the seconds of a minute."
+            )
+            sleep(random.choice(range(10, 20)))  # noqa: S311
         _update_once(domain, subdomain, token, interface, wait_time_between_api_calls, dry_run)
 
 
