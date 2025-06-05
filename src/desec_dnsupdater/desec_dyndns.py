@@ -151,16 +151,18 @@ def _update_once(
     # Get the public IPv4 address
     public_ipv4 = _get_public_ipv4()
     if not public_ipv4:
-        _warn("Failed to retrieve public IPv4 address, skipping update of IPv4.")
+        _warn("Failed to retrieve public IPv4 address, skipping update of IPv4 address.")
     else:
         to_update.A = public_ipv4
     if interface:
         _debug(f"Using interface {interface} for IPv6 address retrieval.")
         public_ipv6 = _get_public_ipv6(interface)
         if not public_ipv6:
-            _warn("Failed to retrieve public IPv6 address, skipping update of IPv6.")
+            _warn("Failed to retrieve public IPv6 address, skipping update of IPv6 address.")
         else:
             to_update.AAAA = public_ipv6
+    else:
+        _debug("No interface specified, skipping update of IPv6 address.")
     for rtype, public_ip in to_update.as_tuples():
         for subdomain_name in subdomain:
             # handle special case of empty subdomain

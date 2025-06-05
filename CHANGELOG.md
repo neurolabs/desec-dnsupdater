@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Added documentation about the requirement for EUI-64 IPv6 addresses
 - Added debug log output for detected IPv4 address, analogous to detected IPv6 address
+- Added debug log for interface parameter unspecified
 
 ### Changed
 
