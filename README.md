@@ -67,6 +67,9 @@ desec-dyndns --domain example.com --subdomain www --token YOUR_DESEC_TOKEN --con
 ### Increase verbosity
 
 ```bash
+# Show only errors
+desec-dyndns --domain example.com --subdomain www --token YOUR_DESEC_TOKEN
+
 # Show warnings and errors
 desec-dyndns --domain example.com --subdomain www --token YOUR_DESEC_TOKEN -v
 
@@ -143,7 +146,7 @@ desec-dyndns  # Uses values from environment
 1. The tool retrieves your current public IPv4 address from ipify.org
 2. If specified, it detects your public IPv6 address from the given network interface
 3. It compares these with the current DNS records for your domain
-4. If different, it updates the records using the deSEC API
+4. If different, it updates the records using the deSEC API via the `desec-dns` python client
 
 ### Assumptions
 
