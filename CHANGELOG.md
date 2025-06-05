@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- open log file for appending instead of for writing
+- only configure cli logging for desec lib if log target is stdout
+
 ### Deprecated
 
 ### Removed

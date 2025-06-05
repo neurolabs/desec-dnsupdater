@@ -43,8 +43,10 @@ def _configure_logging(log_target: click.File, verbosity: int) -> None:
     global _log_target, _log_verbosity_level
     _log_target = log_target
     _log_verbosity_level = verbosity
-    # verbosity 3 -> level 10 (DEBUG), verbosity 2 -> level 20 (INFO), verbosity 1 -> level 30 (WARNING), verbosity 0 -> level 40 (ERROR)
-    desec._configure_cli_logging(40 - verbosity * 10)
+    if _log_target == sys.stdout:
+        # also configure desec's CLI logging
+        # verbosity 3 -> level 10 (DEBUG), verbosity 2 -> level 20 (INFO), verbosity 1 -> level 30 (WARNING), verbosity 0 -> level 40 (ERROR)
+        desec._configure_cli_logging(40 - verbosity * 10)
 
 
 def _debug(*args: Any, **kwargs: Any) -> None:
@@ -209,7 +211,7 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], auto_envvar_prefix="
 @click.option(
     "--log-file",
     "-l",
-    type=click.File("w"),
+    type=click.File("a"),
     default="-",
     show_default=True,
     help="The file to write logs to. Defaults to stdout.",
