@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added documentation about the requirement for EUI-64 IPv6 addresses
+
 ### Changed
 
 ### Deprecated

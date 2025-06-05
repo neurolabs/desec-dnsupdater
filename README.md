@@ -154,6 +154,69 @@ desec-dyndns  # Uses values from environment
 - For IPv6 updates, you need a globally routable IPv6 address on the specified interface which is derived from your MAC address (no privacy extensions)
 - You have properly set up your domain with deSEC.io
 
+### IPv6 Address Detection Details
+
+The IPv6 address detection in this tool specifically relies on **EUI-64 formatted IPv6 addresses** that are directly derived from the MAC address of the specified network interface. The reason for this is that my AVM FritzBox seems to require it for working IPv6 port forwarding. Here's how it works:
+
+1. The tool retrieves the MAC address of the specified interface
+2. It converts this MAC address to an EUI-64 identifier by:
+   - Splitting the 48-bit MAC address into two 24-bit halves
+   - Inserting the fixed value `FF:FE` between these halves
+   - Inverting the 7th bit of the first byte (the "Universal/Local" bit)
+3. It then looks for a public IPv6 address on the interface that ends with this EUI-64 identifier
+4. Only if such an address is found, it will be used for updating AAAA records
+
+#### Important Notes on IPv6 Address Types
+
+This tool will **not** work with:
+- IPv6 addresses generated with privacy extensions (RFC 4941)
+- Randomly generated IPv6 addresses
+- Manually configured IPv6 addresses that don't follow the EUI-64 format
+
+It will **only** work with:
+- Stateless Address Autoconfiguration (SLAAC) addresses using the EUI-64 format
+- Statically configured addresses that follow the EUI-64 format derived from the MAC address
+
+#### Setting Up EUI-64 IPv6 Addressing with systemd-networkd
+
+To ensure your system generates the right type of IPv6 address, you can use systemd-networkd with the following configuration:
+
+1. Create a network configuration file in `/etc/systemd/network/` (e.g., `20-wired.network`):
+
+```ini
+[Match]
+Name=eth0  # Replace with your actual interface name
+
+[Network]
+DHCP=yes
+IPv6AcceptRA=yes
+
+[IPv6AcceptRA]
+UseAutonomous=yes
+UseDNS=yes
+# This is critical - disable privacy extensions
+UsePrivacy=no
+```
+
+2. Enable and restart systemd-networkd:
+
+```
+sudo systemctl enable systemd-networkd
+sudo systemctl restart systemd-networkd
+```
+
+3. Verify your IPv6 address is derived from your MAC address:
+
+```
+# Show your MAC address
+ip link show eth0 | grep link/ether
+
+# Show your IPv6 addresses
+ip -6 addr show dev eth0 | grep 'scope global'
+```
+
+The IPv6 address should have its last 64 bits derived from your MAC address, with the 7th bit inverted and FF:FE inserted in the middle.
+
 ## Running as a Service
 
 ### Systemd
