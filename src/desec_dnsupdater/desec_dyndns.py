@@ -161,24 +161,24 @@ def _update_once(
             to_update.AAAA = public_ipv6
     for rtype, public_ip in to_update.as_tuples():
         for subdomain_name in subdomain:
+            # handle special case of empty subdomain
+            fqdn = f"{subdomain_name}.{domain}" if subdomain_name else domain
             ips = [
                 rdata.address  # type: ignore[attr-defined]
-                for rdata in _get_resolver_against_domain_nameservers(domain).resolve(
-                    f"{subdomain_name}.{domain}", rtype
-                )
+                for rdata in _get_resolver_against_domain_nameservers(domain).resolve(fqdn, rtype)
             ]
-            _debug(f"Resolved {rtype} records for {subdomain_name}.{domain}: {ips}")
+            _debug(f"Resolved {rtype} records for {fqdn}: {ips}")
             if ips:
                 if len(ips) > 1:
-                    _warn(f"Multiple {rtype} records found for {subdomain_name}.{domain}, skipping update of {rtype}")
+                    _warn(f"Multiple {rtype} records found for {fqdn}, skipping update of {rtype}")
                     continue
-                if len(ips) == 1 and public_ipv4 in ips:
-                    _info(f"{rtype} record for {subdomain_name}.{domain} is already up to date.")
+                if len(ips) == 1 and public_ip in ips:
+                    _info(f"{rtype} record for {fqdn} is already up to date.")
                     continue
             if dry_run:
-                _info(f"Dry run: Would create/update {rtype} record for {subdomain_name}.{domain} to {public_ip}")
+                _info(f"Dry run: Would create/update {rtype} record for {fqdn} to {public_ip}")
             else:
-                _info(f"Creating/Updating {rtype} record for {subdomain_name}.{domain} to {public_ip}")
+                _info(f"Creating/Updating {rtype} record for {fqdn} to {public_ip}")
                 api_client = desec.APIClient(token=token, request_timeout=5, retry_limit=5)
                 records = api_client.get_records(domain=domain, rtype=rtype, subname=subdomain_name)
                 if records and len(records):

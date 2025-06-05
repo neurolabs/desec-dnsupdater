@@ -16,6 +16,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Handled special case of empty subdomain (`-s ""`)
+- Fixed error in IPv6 update path where IPv6 address was compared against IPv4 address
+
 ### Security
 
 ## [0.1.2] - 2025-06-05
