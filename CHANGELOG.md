@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.1.3] - 2025-06-05
+
+### Added
+
 - Added documentation about the requirement for EUI-64 IPv6 addresses
 - Added debug log output for detected IPv4 address, analogous to detected IPv6 address
 - Added debug log for interface parameter unspecified
