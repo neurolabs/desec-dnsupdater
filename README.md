@@ -25,7 +25,7 @@ pip install desec-dnsupdater
 ### From source
 
 ```bash
-git clone https://github.com/yourusername/desec-dnsupdater.git
+git clone https://github.com/neurolabs/desec-dnsupdater.git
 cd desec-dnsupdater
 pip install .
 # OR using Poetry
